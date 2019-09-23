@@ -19,17 +19,26 @@ public class EmailSenderImpl implements EmailSender {
     private JavaMailSender mailSender;
     private EmailAddressValidator addressValidator;
 
-    public EmailSenderImpl(JavaMailSender mailSender, EmailAddressValidator addressValidator) {
+    public EmailSenderImpl(
+            JavaMailSender mailSender,
+            EmailAddressValidator addressValidator) {
         this.mailSender = mailSender;
         this.addressValidator = addressValidator;
     }
 
     @Override
-    public void sendMessage(MessageParams params) throws IllegalArgumentException, MessagingException, FileNotFoundException, MailException {
+    public void sendMessage(MessageParams params) throws
+            IllegalArgumentException,
+            MessagingException,
+            FileNotFoundException,
+            MailException {
         mailSender.send(composeMessage(params));
     }
 
-    private MimeMessage composeMessage(MessageParams params) throws IllegalArgumentException, MessagingException, FileNotFoundException {
+    private MimeMessage composeMessage(MessageParams params) throws
+            IllegalArgumentException,
+            MessagingException,
+            FileNotFoundException {
         MimeMessage message = mailSender.createMimeMessage();
         if (isEachRequiredParamPresent(params)) {
             boolean isMessageWithAttachments = isMessageWithAttachments(params);
@@ -44,8 +53,10 @@ public class EmailSenderImpl implements EmailSender {
     }
 
     private boolean isEachRequiredParamPresent(MessageParams params) throws IllegalArgumentException {
-        Preconditions.checkArgument(params.getRecipient() != null && addressValidator.isCorrect(params.getRecipient()),  "Wrong recipient!");
-        Preconditions.checkArgument(params.getSubject() != null && !params.getSubject().isEmpty(), "Wrong subject!");
+        Preconditions.checkArgument(params.getRecipient() != null
+                && addressValidator.isCorrect(params.getRecipient()),  "Wrong recipient!");
+        Preconditions.checkArgument(params.getSubject() != null
+                && !params.getSubject().isEmpty(), "Wrong subject!");
         Preconditions.checkArgument(params.getTextContent() != null,  "Wrong textContent!");
         Preconditions.checkArgument(params.getIsHtml() != null,  "Wrong isHtml!");
         return true;
@@ -55,7 +66,10 @@ public class EmailSenderImpl implements EmailSender {
         return params.getAttachments() != null && !params.getAttachments().isEmpty();
     }
 
-    private void addAttachments(MimeMessageHelper helper, Map<String, String> attachments) throws MessagingException, FileNotFoundException, IllegalArgumentException {
+    private void addAttachments(MimeMessageHelper helper, Map<String, String> attachments) throws
+            MessagingException,
+            FileNotFoundException,
+            IllegalArgumentException {
         for (String path : attachments.keySet()) {
             File file = new File(path);
             String name = attachments.get(path);
